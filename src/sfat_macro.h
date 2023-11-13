@@ -10,6 +10,16 @@ extern "C"{
 
 #include "sfat_type.h"
 
+#define _SFAT_DEBUG
+
+#ifdef _SFAT_DEBUG
+    #include <stdio.h>
+    #define SFAT_log(Content,...) printf(Content,##__VA_ARGS__)                                               
+#else
+    #define SFAT_log(...)
+#endif
+
+
 #ifndef NULL
     #define NULL ((void*)0)
 #endif
@@ -26,11 +36,13 @@ extern "C"{
 #define DPT_ITEM_NUM            4
 #define SECTOR_MBR_ADDR         (ULONG)0
 #define SECTOR_MBR_SIZE         512
-
-#define FILE_SYSTEM_TYPE_NONE   0x00
-#define FILE_SYSTEM_TYPE_FAT32  0x0B
-#define FILE_SYSTEM_TYPE_FAT32_C   0x0C
-
+/**
+ * File System TypeCode
+*/
+#define FILE_SYSTEM_TYPE_NONE      0x00
+#define FILE_SYSTEM_TYPE_FAT32_2G  0x0B
+#define FILE_SYSTEM_TYPE_FAT32_2T  0x0C
+#define FILE_SYSTEM_TYPE_FAT32_2M  0x01
 /**
  * DBR
 */
@@ -71,7 +83,7 @@ extern "C"{
 /**
  * sfat error code
 */
-#define RUN_OK                  1
+#define RUN_OK                   1
 #define UNKNOWN_FS              -1
 #define NOT_MBR                 -2
 #define NOT_DBR                 -3
@@ -79,6 +91,8 @@ extern "C"{
 #define READ_DISK_ERROR         -5
 #define PART_SECTOR_NUM_UNEQU   -6
 #define PARAM_ERROR             -7
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -7,7 +7,7 @@
 static SFAT_RES SFAT_Analysis_DPT(MEDIUM_TYPES_T dev,struct sfat_system_param * sysInfo);
 static SFAT_RES SFAT_Analysis_BPB(MEDIUM_TYPES_T dev,struct sfat_system_param * sysInfo);
 static SFAT_RES SFAT_Analysis_PDI(struct PDI_Typedef * pdi,struct file_Info * info);
-
+static void SFAT_ShowAllInfo(struct sfat_system_param * sysInfo);
 
 /**
  * @description: SFAT获取FAT32文件系统参数
@@ -15,16 +15,38 @@ static SFAT_RES SFAT_Analysis_PDI(struct PDI_Typedef * pdi,struct file_Info * in
  * @param {sfat_system_param *} sysInfo
  * @return {*}
  */
-SFAT_RES SFAT_GetSysInfo(MEDIUM_TYPES_T dev,struct sfat_system_param * sysInfo)
+SFAT_RES SFAT_ReadSysInfo(MEDIUM_TYPES_T dev,struct sfat_system_param * sysInfo)
 {
     SFAT_RES res = RUN_OK;
     res = SFAT_Analysis_DPT(dev,sysInfo);
     if(res > 0){
-       SFAT_Analysis_BPB(dev,sysInfo);
+       res = SFAT_Analysis_BPB(dev,sysInfo);
+       if(res > 0) SFAT_ShowAllInfo(sysInfo);
+       return res;
     }
     return res;
 }
 
+/**
+ * @description: 打印系统参数
+ * @param {sfat_system_param *} sysInfo
+ * @return {*}
+ */
+static void SFAT_ShowAllInfo(struct sfat_system_param * sysInfo)
+{
+    SFAT_log("\r\n======= SFAT System InfoTable ========\r\n");
+    SFAT_log("-> FileSystemType------[0x%x] \r\n",sysInfo->sys_id);
+    SFAT_log("-> PartSartSectorAddr--[0x%x] \r\n",sysInfo->part_start_sector_addr);
+    SFAT_log("-> DiskSize------------[%d MB] \r\n",sysInfo->disk_size);
+    SFAT_log("-> SectorBytes---------[%d B] \r\n",sysInfo->bytes_of_sector);
+    SFAT_log("-> SectorsOfCluster----[%d] \r\n",sysInfo->sector_num_of_cluster);
+    SFAT_log("-> FatTableNum---------[%d] \r\n",sysInfo->fat_num);
+    SFAT_log("-> SectorsOfFatTable---[%d] \r\n",sysInfo->sector_num_of_fat);
+    SFAT_log("-> FatTableNum---------[%d] \r\n",sysInfo->fat_num);
+    SFAT_log("-> Fat1StartSectorAddr-[0x%x] \r\n",sysInfo->fat1_start_sector_addr);
+    SFAT_log("-> FirstDirSectorAddr--[0x%x] \r\n",sysInfo->firstdir_start_sector_addr);
+    SFAT_log("======= End System InfoTable  ========\r\n");
+}
 
 /**
  * @description: 解析DPT字段
@@ -47,14 +69,18 @@ static SFAT_RES SFAT_Analysis_DPT(MEDIUM_TYPES_T dev,struct sfat_system_param * 
                 sysInfo->part_start_sector_addr = SECTOR_MBR_ADDR;
                 return res;
             }else{
+                /* find Fat32 file system */
                 for (i = 0; i < DPT_ITEM_NUM; i++){
                     if(ptr->dpt[i].id == FILE_SYSTEM_TYPE_NONE){
                         continue;
-                    }else if(ptr->dpt[i].id == FILE_SYSTEM_TYPE_FAT32){
-                        sysInfo->sys_id = FILE_SYSTEM_TYPE_FAT32;
+                    }else if(ptr->dpt[i].id == FILE_SYSTEM_TYPE_FAT32_2M){
+                        sysInfo->sys_id = FILE_SYSTEM_TYPE_FAT32_2M;
                         break;
-                    }else if(ptr->dpt[i].id == FILE_SYSTEM_TYPE_FAT32_C){
-                        sysInfo->sys_id = FILE_SYSTEM_TYPE_FAT32_C;
+                    }else if(ptr->dpt[i].id == FILE_SYSTEM_TYPE_FAT32_2G){
+                        sysInfo->sys_id = FILE_SYSTEM_TYPE_FAT32_2G;
+                        break;
+                    }else if(ptr->dpt[i].id == FILE_SYSTEM_TYPE_FAT32_2T){
+                        sysInfo->sys_id = FILE_SYSTEM_TYPE_FAT32_2T;
                         break;
                     }else{
                         res = UNKNOWN_FS;
@@ -109,6 +135,7 @@ static SFAT_RES SFAT_Analysis_BPB(MEDIUM_TYPES_T dev,struct sfat_system_param * 
                                             + sysInfo->sector_num_of_rsvd;
             sysInfo->firstdir_start_sector_addr = sysInfo->fat1_start_sector_addr 
                                                 + sysInfo->sector_num_of_fat * sysInfo->fat_num;
+            sysInfo->disk_size = (UINT)((float)sysInfo->sector_total_num * (float)((float)sysInfo->bytes_of_sector / 1048576.0f ));
         }else{
             res = NOT_DBR;           
         }

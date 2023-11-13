@@ -10,6 +10,7 @@ extern "C"{
 
 #include "sfat_type.h"
 #include "sfat_macro.h"
+
 /**
  * DPT->DPT.ITEM 字段数据结构
 */
@@ -32,6 +33,7 @@ struct __attribute__((__packed__)) MBR_Typedef{
     struct DPT_Item dpt[DPT_ITEM_NUM];
     UBYTE magic_num[2];
 };
+
 /**
  * BPB 字段数据结构
 */
@@ -45,6 +47,7 @@ struct __attribute__((__packed__)) BPB_Typedef{
     UBYTE sector_num_of_fat[4];     // 每个fat表的扇区数
     UBYTE unused2[50];              // 未用区2
 };
+
 /**
  * DBR 字段数据结构
 */
@@ -90,6 +93,7 @@ struct sfat_system_param{
     UINT sector_total_num;          // 总扇区数    
     UINT fat1_start_sector_addr;    // fat1起始扇区
     UINT firstdir_start_sector_addr;// 首目录起始扇区
+    UINT disk_size;                 // 磁盘总容量(MB)
 };
 
 /**
@@ -110,9 +114,9 @@ struct Time_Date{
 struct file_Info{
     UBYTE filename[FILE_NAME_BLEN];     // 文件名
     UBYTE file_attr;                    // 文件属性
-    struct Time_Date ctim;               // 创建时间日期
-    struct Time_Date atim;               // 访问时间日期
-    struct Time_Date mtim;               // 修改时间日期
+    struct Time_Date ctim;              // 创建时间日期
+    struct Time_Date atim;              // 访问时间日期
+    struct Time_Date mtim;              // 修改时间日期
     UINT  file_start_cluster;           // 文件起始簇
     UINT  file_size;                    // 文件大小
 };

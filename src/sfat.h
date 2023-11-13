@@ -16,7 +16,7 @@ extern "C"{
 
 
 /**
- * change little endian
+ * 转换小端模式
 */
 static inline UINT SHIFT_LITTLE_ENDIAN(UBYTE * ptr,UINT len){
     UINT res = 0;
@@ -26,6 +26,15 @@ static inline UINT SHIFT_LITTLE_ENDIAN(UBYTE * ptr,UINT len){
     if(len >= 4) res |= ((UINT)(ptr[3])) << 24;
     return res;
 }
+
+
+/**
+ * @description: SFAT获取FAT32文件系统参数
+ * @param {MEDIUM_TYPES_T } dev
+ * @param {sfat_system_param *} sysInfo
+ * @return {*}
+ */
+SFAT_RES SFAT_ReadSysInfo(MEDIUM_TYPES_T dev,struct sfat_system_param * sysInfo);
 
 /**
  * 磁盘驱动移植接口
