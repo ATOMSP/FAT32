@@ -76,12 +76,18 @@ struct __attribute__((__packed__)) PDI_Typedef{
     UBYTE start_cluster_low16[2];          // 起始簇低16位
     UBYTE file_data_len[FILE_DATA_BLEN];     // 文件数据长度(byte)
 };
-
+/**
+ * 扇区文件目录项结构
+*/
+struct __attribute__((__packed__)) PDOS_Typedef{
+    struct PDI_Typedef pdi[PDI_NUM_OF_SECTOR];
+};
 
 /**
  * sfat 文件系统参数表
 */
 struct sfat_system_param{
+    UBYTE dev_owner;                // 设备号
     UBYTE sys_id;                   // 分区类型
     UINT  part_start_sector_addr;   // 分区起始扇区地址
     UINT  part_total_sectors;       // 分区总扇区数
@@ -95,6 +101,9 @@ struct sfat_system_param{
     UINT firstdir_start_sector_addr;// 首目录起始扇区
     UINT disk_size;                 // 磁盘总容量(MB)
 };
+
+
+
 
 /**
  * 日期和时间数据结构

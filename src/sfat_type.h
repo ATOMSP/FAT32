@@ -12,7 +12,7 @@ extern "C"{
  * return data type
 */
 typedef int SFAT_RES;
-typedef int MEDIUM_TYPES_T;
+typedef unsigned char MEDIUM_TYPES_T;
 typedef unsigned char UBYTE;
 typedef unsigned short USHORT;
 typedef unsigned long ULONG;

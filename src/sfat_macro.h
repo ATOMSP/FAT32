@@ -30,6 +30,11 @@ extern "C"{
 #define DEV_SD  (MEDIUM_TYPES_T)0
 
 /**
+ * Hard 
+*/
+#define SECTOR_SIZE     512
+#define PDI_NUM_OF_SECTOR (SECTOR_SIZE / 4)
+/**
  * MBR
 */
 #define BOOT_CODE_SIZE          446
@@ -43,6 +48,7 @@ extern "C"{
 #define FILE_SYSTEM_TYPE_FAT32_2G  0x0B
 #define FILE_SYSTEM_TYPE_FAT32_2T  0x0C
 #define FILE_SYSTEM_TYPE_FAT32_2M  0x01
+
 /**
  * DBR
 */
@@ -50,7 +56,7 @@ extern "C"{
 #define BOOT_CODE2_SIZE 420
 #define UNUSED_CODE_SIZE 11
 #define SECTOR_DBR_SIZE 512
-
+#define FISRT_DIR_CLUSTER 2
 /**
  * PDI
 */
@@ -91,7 +97,10 @@ extern "C"{
 #define READ_DISK_ERROR         -5
 #define PART_SECTOR_NUM_UNEQU   -6
 #define PARAM_ERROR             -7
-
+#define SECTOR_SIZE_NOT_512     -8
+#define FILENAME_UNEQU          -9
+#define FILE_NO_FIND            -10
+#define ERROR_FILE_NAME         -11
 
 #ifdef __cplusplus
 }

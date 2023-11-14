@@ -26,15 +26,28 @@ static inline UINT SHIFT_LITTLE_ENDIAN(UBYTE * ptr,UINT len){
     if(len >= 4) res |= ((UINT)(ptr[3])) << 24;
     return res;
 }
+/**
+ * 簇首所在扇区地址，从首目录算起
+*/
+#define CLUSTER_TO_SECTOR(pSysInfo,cluster)     (((pSysInfo)->firstdir_start_sector_addr) + (((cluster) - 2) * ((pSysInfo)->sector_num_of_cluster)))
 
 
 /**
  * @description: SFAT获取FAT32文件系统参数
  * @param {MEDIUM_TYPES_T } dev
- * @param {sfat_system_param *} sysInfo
  * @return {*}
  */
-SFAT_RES SFAT_ReadSysInfo(MEDIUM_TYPES_T dev,struct sfat_system_param * sysInfo);
+SFAT_RES SFAT_ReadSysInfo(MEDIUM_TYPES_T dev);
+/**
+ * @description: SFAT查找对应文件名的文件，返回其文件信息
+ * @param {const char* } filename
+ * @param {file_Info *} fi
+ * @return {*}
+ */
+SFAT_RES SFAT_FindFile(const char* filename,struct file_Info * fi);
+
+void SFAT_ShowFDIInfo(struct file_Info * fi);
+
 
 /**
  * 磁盘驱动移植接口
